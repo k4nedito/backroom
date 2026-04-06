@@ -111,3 +111,7 @@ pnpm --filter @backrooms/api db:studio
 
 pnpm --filter @backrooms/api db:push
 ```
+
+# Misc
+
+When config is set to dev mode, we don't abuse the email provider and OTP codes are logged in console

@@ -133,6 +133,12 @@ export function FeedCard({
               >
                 {talentLevelLabels[job.talentLevel]}
               </Badge>
+              {isBuilder && submitted && (
+                <span className="flex items-center gap-1 text-[10px] text-primary/70">
+                  <CheckCircle className="size-3" weight="fill" />
+                  Submitted
+                </span>
+              )}
             </div>
           </div>
 
