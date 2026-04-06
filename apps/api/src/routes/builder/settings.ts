@@ -10,13 +10,34 @@ import {
   updateBuilderEmail,
 } from "../../services/builder/profile";
 
+const workHistorySchema = z.object({
+  company: z.string().min(1),
+  role: z.string().min(1),
+  from: z.string().min(1),
+  to: z.string().nullable(),
+  description: z.string(),
+});
+
+const educationSchema = z.object({
+  institution: z.string().min(1),
+  degree: z.string().min(1),
+  field: z.string().min(1),
+  from: z.string().min(1),
+  to: z.string().nullable(),
+});
+
 const profileSchema = z.object({
   name: z.string().min(1).optional(),
   title: z.string().min(1).max(200).optional(),
+  bio: z.string().max(2000).optional(),
   skills: z.array(z.string().min(1)).max(20).optional(),
   hourlyRate: z.number().int().positive().optional(),
   availability: z.enum(["full_time", "part_time", "not_available"]).optional(),
   timezone: z.string().min(1).max(100).optional(),
+  website: z.string().url().max(500).optional(),
+  languages: z.array(z.string().min(1)).max(20).optional(),
+  workHistory: z.array(workHistorySchema).max(20).optional(),
+  education: z.array(educationSchema).max(10).optional(),
 });
 
 const emailRequestSchema = z.object({

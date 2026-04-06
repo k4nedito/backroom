@@ -15,15 +15,36 @@ export const availabilityEnum = pgEnum("availability", [
   "not_available",
 ]);
 
+export type WorkHistoryEntry = {
+  company: string;
+  role: string;
+  from: string;
+  to: string | null;
+  description: string;
+};
+
+export type EducationEntry = {
+  institution: string;
+  degree: string;
+  field: string;
+  from: string;
+  to: string | null;
+};
+
 export const builders = pgTable("builders", {
   id: uuid("id").defaultRandom().primaryKey(),
   email: text("email").notNull().unique(),
   name: text("name").notNull(),
   title: varchar("title", { length: 200 }),
+  bio: text("bio"),
   skills: jsonb("skills").$type<string[]>().default([]),
   hourlyRate: integer("hourly_rate"),
   availability: availabilityEnum("availability"),
   timezone: varchar("timezone", { length: 100 }),
+  website: varchar("website", { length: 500 }),
+  languages: jsonb("languages").$type<string[]>().default([]),
+  workHistory: jsonb("work_history").$type<WorkHistoryEntry[]>().default([]),
+  education: jsonb("education").$type<EducationEntry[]>().default([]),
   profileComplete: boolean("profile_complete").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

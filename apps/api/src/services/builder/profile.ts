@@ -1,5 +1,5 @@
 import { db } from "../../db";
-import { builders } from "../../db/schema";
+import { builders, type WorkHistoryEntry, type EducationEntry } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { AppError, ErrorCode } from "../../errors";
 
@@ -17,13 +17,29 @@ export async function updateBuilderProfile(
   data: {
     name?: string;
     title?: string;
+    bio?: string;
     skills?: string[];
     hourlyRate?: number;
     availability?: "full_time" | "part_time" | "not_available";
     timezone?: string;
+    website?: string;
+    languages?: string[];
+    workHistory?: WorkHistoryEntry[];
+    education?: EducationEntry[];
   },
 ) {
-  const profileComplete = !!(data.title && data.skills?.length && data.hourlyRate && data.availability && data.timezone);
+  // Fetch current builder to merge with incoming data for profileComplete check
+  const current = await getBuilderById(id);
+  if (!current) throw new AppError(ErrorCode.NOT_FOUND, "Builder not found");
+
+  const merged = { ...current, ...data };
+  const profileComplete = !!(
+    merged.title &&
+    (merged.skills as string[])?.length &&
+    merged.hourlyRate &&
+    merged.availability &&
+    merged.timezone
+  );
 
   const [builder] = await db
     .update(builders)

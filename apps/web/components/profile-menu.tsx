@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { User as UserIcon, SignOut, Gear } from "@phosphor-icons/react";
+import { User as UserIcon, SignOut, Gear, UserCircle } from "@phosphor-icons/react";
 import { Avatar, AvatarFallback } from "@workspace/ui/components/avatar";
 import {
   DropdownMenu,
@@ -65,6 +65,14 @@ export function ProfileMenu({ name, email, role }: Props) {
         <DropdownMenuItem
           onSelect={() =>
             router.push(role === "seeker" ? "/seeker/settings" : "/builder/profile")
+          }
+        >
+          <UserCircle className="size-3.5" />
+          <span>Profile</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onSelect={() =>
+            router.push(role === "seeker" ? "/seeker/settings" : "/builder/settings")
           }
         >
           <Gear className="size-3.5" />

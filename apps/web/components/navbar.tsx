@@ -14,7 +14,7 @@ const seekerLinks = [
 const builderLinks = [
   ...commonLinks,
   { href: "/builder/applications", label: "My Applications" },
-  { href: "/builder/profile", label: "Profile" },
+  { href: "/builder/convos", label: "Convos" },
 ];
 
 export async function Navbar() {
