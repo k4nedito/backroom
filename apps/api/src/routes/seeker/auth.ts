@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { createAndSendOtp, verifyOtp } from "../../services/otp";
 import { getOrCreateSeeker } from "../../services/seeker/auth";
+import { AppError, ErrorCode } from "../../errors";
 
 const otpRequestSchema = z.object({
   email: z.string().email(),
@@ -16,7 +17,7 @@ export async function seekerAuthRoutes(app: FastifyInstance) {
   app.post("/seeker/auth/otp", async (req, reply) => {
     const parsed = otpRequestSchema.safeParse(req.body);
     if (!parsed.success)
-      return reply.status(400).send({ error: parsed.error.flatten() });
+      throw new AppError(ErrorCode.VALIDATION_ERROR, "Invalid email");
 
     await createAndSendOtp(parsed.data.email);
     return { ok: true };
@@ -25,14 +26,10 @@ export async function seekerAuthRoutes(app: FastifyInstance) {
   app.post("/seeker/auth/verify", async (req, reply) => {
     const parsed = otpVerifySchema.safeParse(req.body);
     if (!parsed.success)
-      return reply.status(400).send({ error: parsed.error.flatten() });
+      throw new AppError(ErrorCode.VALIDATION_ERROR, "Invalid email or code format");
 
     const { email, code } = parsed.data;
-    const result = await verifyOtp(email, code);
-
-    if (!result.valid)
-      return reply.status(401).send({ error: result.error });
-
+    await verifyOtp(email, code);
     const seeker = await getOrCreateSeeker(email);
 
     const token = app.jwt.sign(
