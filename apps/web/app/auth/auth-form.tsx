@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { api } from "@/lib/api";
 import { Button } from "@workspace/ui/components/button";
@@ -12,17 +13,17 @@ import {
 } from "@workspace/ui/components/input-otp";
 import { Label } from "@workspace/ui/components/label";
 
-type Step = "email" | "otp" | "signup" | "done";
+type Step = "email" | "otp" | "signup";
 type Role = "seeker" | "builder";
 
 export function AuthForm() {
+  const router = useRouter();
   const [role, setRole] = useState<Role>("seeker");
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
-  const [signupToken, setSignupToken] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -52,8 +53,6 @@ export function AuthForm() {
 
     const { data, error: apiError } = await api<{
       isNew: boolean;
-      token?: string;
-      signupToken?: string;
       seeker?: any;
     }>(`/${role}/auth/verify`, {
       method: "POST",
@@ -65,11 +64,10 @@ export function AuthForm() {
     if (!data) return;
 
     if (data.isNew) {
-      setSignupToken(data.signupToken!);
       setStep("signup");
     } else {
-      localStorage.setItem("token", data.token!);
-      setStep("done");
+      router.push(role === "seeker" ? "/seeker/jobs" : "/builder/jobs");
+      router.refresh();
     }
   }
 
@@ -81,39 +79,18 @@ export function AuthForm() {
 
     setLoading(true);
     const { data, error: apiError } = await api<{
-      token: string;
       seeker: any;
     }>(`/${role}/auth/signup`, {
       method: "POST",
       body: JSON.stringify({ email, name, company: company || undefined }),
-      headers: { Authorization: `Bearer ${signupToken}` },
     });
     setLoading(false);
 
     if (apiError) return setError(apiError.message);
     if (!data) return;
 
-    localStorage.setItem("token", data.token);
-    setStep("done");
-  }
-
-  if (step === "done") {
-    return (
-      <div className="w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
-        <div className="flex flex-col gap-3 text-center">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-foreground/10 bg-foreground/[0.03]">
-            <span className="text-sm">✓</span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <h1 className="text-sm font-medium tracking-tight">You're in</h1>
-            <p className="text-xs text-muted-foreground">{email}</p>
-          </div>
-          <p className="text-[11px] text-muted-foreground/60 mt-2">
-            Dashboard coming soon.
-          </p>
-        </div>
-      </div>
-    );
+    router.push(role === "seeker" ? "/seeker/jobs" : "/builder/jobs");
+    router.refresh();
   }
 
   return (

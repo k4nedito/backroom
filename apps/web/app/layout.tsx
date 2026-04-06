@@ -2,6 +2,7 @@ import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google"
 
 import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Navbar } from "@/components/navbar"
 import { cn } from "@workspace/ui/lib/utils";
 
 const fontSans = Geist({
@@ -22,8 +23,11 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("antialiased", fontSans.variable, "font-mono", jetbrainsMono.variable)}
     >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className="flex flex-col h-svh overflow-hidden">
+        <ThemeProvider>
+          <Navbar />
+          <div className="flex-1 overflow-y-auto">{children}</div>
+        </ThemeProvider>
       </body>
     </html>
   )

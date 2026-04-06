@@ -64,7 +64,7 @@ export async function seekerAuthRoutes(app: FastifyInstance) {
 
     if (seeker) {
       const token = app.jwt.sign(
-        { id: seeker.id, email: seeker.email, role: "seeker" },
+        { id: seeker.id, email: seeker.email, name: seeker.name, role: "seeker" },
         { expiresIn: "7d" }
       );
       setAuthCookie(reply, token);
@@ -106,12 +106,17 @@ export async function seekerAuthRoutes(app: FastifyInstance) {
     const seeker = await createSeeker({ email, name, company });
 
     const token = app.jwt.sign(
-      { id: seeker.id, email: seeker.email, role: "seeker" },
+      { id: seeker.id, email: seeker.email, name: seeker.name, role: "seeker" },
       { expiresIn: "7d" }
     );
 
     setAuthCookie(reply, token);
     reply.clearCookie("signup_token", { path: "/" });
     return { seeker };
+  });
+
+  app.post("/seeker/auth/logout", async (req, reply) => {
+    reply.clearCookie("token", { path: "/" });
+    return { ok: true };
   });
 }

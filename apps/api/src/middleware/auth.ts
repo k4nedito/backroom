@@ -4,6 +4,7 @@ import { AppError, ErrorCode } from "../errors";
 export type AuthPayload = {
   id: string;
   email: string;
+  name: string;
   role: "seeker";
 };
 

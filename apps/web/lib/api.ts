@@ -8,6 +8,7 @@ export async function api<T>(
 
   const res = await fetch(`${API_URL}${path}`, {
     ...rest,
+    credentials: "include",
     headers: { "Content-Type": "application/json", ...headers },
   });
 

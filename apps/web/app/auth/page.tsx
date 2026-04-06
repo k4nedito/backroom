@@ -1,11 +1,15 @@
+import { redirect } from "next/navigation";
+import { getUser } from "@/lib/auth";
 import { AuthForm } from "./auth-form";
 
-export default function AuthPage() {
+export default async function AuthPage() {
+  const user = await getUser();
+  if (user) redirect(user.role === "seeker" ? "/seeker/jobs" : "/builder/jobs");
   return (
-    <div className="relative flex min-h-svh items-center justify-center overflow-hidden bg-background p-4">
+    <div className="relative flex min-h-full items-center justify-center overflow-hidden bg-background p-4">
       {/* Dot grid pattern */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.06]"
+        className="pointer-events-none absolute inset-0 opacity-[0.08] dark:opacity-[0.06]"
         style={{
           backgroundImage:
             "radial-gradient(circle, currentColor 1px, transparent 1px)",
