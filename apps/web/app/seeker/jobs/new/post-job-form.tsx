@@ -277,7 +277,7 @@ export function PostJobForm() {
       {/* Actions */}
       <div className="flex items-center justify-between pt-2 border-t border-border/40">
         <p className="text-[10px] text-muted-foreground/40 tracking-wide">
-          Saves as draft. Publish anytime.
+          Goes live immediately. Deactivate anytime.
         </p>
         <Button
           type="submit"

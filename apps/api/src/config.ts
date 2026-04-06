@@ -13,7 +13,7 @@ export const config = {
     from: process.env.EMAIL_FROM ?? "Backrooms <onboarding@resend.dev>",
   },
   cors: {
-    origin: process.env.CORS_ORIGIN ?? true,
+    origin: process.env.CORS_ORIGIN ?? "http://localhost:3000",
   },
   otp: {
     expiryMinutes: 10,

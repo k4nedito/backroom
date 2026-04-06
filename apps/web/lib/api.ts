@@ -6,10 +6,28 @@ export async function api<T>(
 ): Promise<{ data?: T; error?: { code: string; message: string } }> {
   const { headers, ...rest } = options ?? {};
 
+  const isServer = typeof window === "undefined";
+  let cookieHeader: Record<string, string> = {};
+
+  if (isServer) {
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    const all = cookieStore.getAll();
+    if (all.length) {
+      cookieHeader = {
+        cookie: all.map((c) => `${c.name}=${c.value}`).join("; "),
+      };
+    }
+  }
+
   const res = await fetch(`${API_URL}${path}`, {
     ...rest,
-    credentials: "include",
-    headers: { "Content-Type": "application/json", ...headers },
+    credentials: isServer ? undefined : "include",
+    headers: {
+      "Content-Type": "application/json",
+      ...cookieHeader,
+      ...headers,
+    },
   });
 
   const json = await res.json();

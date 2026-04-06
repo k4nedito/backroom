@@ -35,7 +35,7 @@ export const jobs = pgTable("jobs", {
   budgetAmount: integer("budget_amount").notNull(),
   duration: varchar("duration", { length: 100 }),
   talentLevel: talentLevelEnum("talent_level").notNull(),
-  active: boolean("active").default(false).notNull(),
+  active: boolean("active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
