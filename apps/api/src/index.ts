@@ -1,15 +1,15 @@
-import { config } from "dotenv";
-config({ path: "../../.env" });
-
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import { seekerAuthRoutes } from "./routes/seeker/auth";
 import { AppError, ErrorCode } from "./errors";
 import { log } from "./logger";
+import { config } from "./config";
 
 const app = Fastify({ logger: false });
 
-app.register(jwt, { secret: process.env.JWT_SECRET! });
+app.register(cors, { origin: config.cors.origin });
+app.register(jwt, { secret: config.jwt.secret });
 
 app.addHook("onResponse", (req, reply, done) => {
   log.request(
@@ -41,13 +41,20 @@ app.setErrorHandler((error: any, req, reply) => {
   });
 });
 
+app.setNotFoundHandler((req, reply) => {
+  log.warn(`Route not found: ${req.method} ${req.url}`);
+  reply.status(404).send({
+    error: { code: ErrorCode.NOT_FOUND, message: "Route not found" },
+  });
+});
+
 app.get("/health", async () => ({ status: "ok" }));
 app.register(seekerAuthRoutes);
 
-app.listen({ port: 3001, host: "0.0.0.0" }, (err) => {
+app.listen({ port: config.port, host: "0.0.0.0" }, (err) => {
   if (err) {
     log.error("Failed to start server", { error: err.message });
     process.exit(1);
   }
-  log.info("Server listening on :3001");
+  log.info(`Server listening on :${config.port} [${config.env}]`);
 });

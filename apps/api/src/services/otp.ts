@@ -4,8 +4,9 @@ import { eq, and, gt } from "drizzle-orm";
 import { Resend } from "resend";
 import { AppError, ErrorCode } from "../errors";
 import { log } from "../logger";
+import { config } from "../config";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(config.resend.apiKey);
 
 function generateOtp(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -13,15 +14,20 @@ function generateOtp(): string {
 
 export async function createAndSendOtp(email: string) {
   const code = generateOtp();
-  const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + config.otp.expiryMinutes * 60 * 1000);
 
   await db.insert(otpCodes).values({ email, code, expiresAt });
 
+  if (config.isDev) {
+    log.info(`[DEV] OTP for ${email}: ${code}`);
+    return;
+  }
+
   const { error } = await resend.emails.send({
-    from: "Backrooms <noreply@backrooms.app>",
+    from: config.resend.from,
     to: email,
     subject: "Your login code",
-    text: `Your code is ${code}. It expires in 10 minutes.`,
+    text: `Your code is ${code}. It expires in ${config.otp.expiryMinutes} minutes.`,
   });
 
   if (error) {
@@ -47,7 +53,8 @@ export async function verifyOtp(email: string, code: string) {
     .limit(1);
 
   if (!otp) throw new AppError(ErrorCode.INVALID_OTP, "Invalid or expired code");
-  if (otp.attempts >= 5) throw new AppError(ErrorCode.TOO_MANY_ATTEMPTS, "Too many attempts");
+  if (otp.attempts >= config.otp.maxAttempts)
+    throw new AppError(ErrorCode.TOO_MANY_ATTEMPTS, "Too many attempts");
 
   await db.update(otpCodes).set({ attempts: otp.attempts + 1 }).where(eq(otpCodes.id, otp.id));
   await db.delete(otpCodes).where(eq(otpCodes.id, otp.id));
