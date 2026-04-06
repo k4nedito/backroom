@@ -1,4 +1,4 @@
-import { pgTable, pgEnum, uuid, text, timestamp, integer, varchar, boolean } from "drizzle-orm/pg-core";
+import { pgTable, pgEnum, uuid, text, timestamp, integer, varchar, boolean, jsonb } from "drizzle-orm/pg-core";
 
 export const seekers = pgTable("seekers", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -9,10 +9,22 @@ export const seekers = pgTable("seekers", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const availabilityEnum = pgEnum("availability", [
+  "full_time",
+  "part_time",
+  "not_available",
+]);
+
 export const builders = pgTable("builders", {
   id: uuid("id").defaultRandom().primaryKey(),
   email: text("email").notNull().unique(),
   name: text("name").notNull(),
+  title: varchar("title", { length: 200 }),
+  skills: jsonb("skills").$type<string[]>().default([]),
+  hourlyRate: integer("hourly_rate"),
+  availability: availabilityEnum("availability"),
+  timezone: varchar("timezone", { length: 100 }),
+  profileComplete: boolean("profile_complete").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

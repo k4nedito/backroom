@@ -6,6 +6,7 @@ import { seekerAuthRoutes } from "./routes/seeker/auth";
 import { seekerJobRoutes } from "./routes/seeker/jobs";
 import { seekerSettingsRoutes } from "./routes/seeker/settings";
 import { builderAuthRoutes } from "./routes/builder/auth";
+import { builderSettingsRoutes } from "./routes/builder/settings";
 import { feedRoutes } from "./routes/feed";
 import { AppError, ErrorCode } from "./errors";
 import { log } from "./logger";
@@ -66,6 +67,7 @@ app.register(seekerAuthRoutes);
 app.register(seekerJobRoutes);
 app.register(seekerSettingsRoutes);
 app.register(builderAuthRoutes);
+app.register(builderSettingsRoutes);
 app.register(feedRoutes);
 
 app.listen({ port: config.port, host: "0.0.0.0" }, (err) => {

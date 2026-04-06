@@ -5,7 +5,7 @@ export type AuthPayload = {
   id: string;
   email: string;
   name: string;
-  role: "seeker";
+  role: "seeker" | "builder";
 };
 
 export async function requireAuth(req: FastifyRequest) {

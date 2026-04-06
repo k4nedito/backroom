@@ -13,7 +13,7 @@ export async function getUser(): Promise<User | null> {
   if (!token) return null;
 
   try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
+    const payload = JSON.parse(atob(token.split(".")[1]!));
     return {
       id: payload.id,
       email: payload.email,
