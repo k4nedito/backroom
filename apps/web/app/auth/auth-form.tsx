@@ -4,13 +4,6 @@ import { useState } from "react";
 import { z } from "zod";
 import { api } from "@/lib/api";
 import { Button } from "@workspace/ui/components/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@workspace/ui/components/card";
 import { Input } from "@workspace/ui/components/input";
 import {
   InputOTP,
@@ -18,7 +11,6 @@ import {
   InputOTPSlot,
 } from "@workspace/ui/components/input-otp";
 import { Label } from "@workspace/ui/components/label";
-import { Tabs, TabsList, TabsTrigger } from "@workspace/ui/components/tabs";
 
 type Step = "email" | "otp" | "signup" | "done";
 type Role = "seeker" | "builder";
@@ -107,67 +99,96 @@ export function AuthForm() {
 
   if (step === "done") {
     return (
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>You're in</CardTitle>
-          <CardDescription>
-            Logged in as {email}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">Dashboard coming soon.</p>
-        </CardContent>
-      </Card>
+      <div className="w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+        <div className="flex flex-col gap-3 text-center">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-foreground/10 bg-foreground/[0.03]">
+            <span className="text-sm">✓</span>
+          </div>
+          <div className="flex flex-col gap-1">
+            <h1 className="text-sm font-medium tracking-tight">You're in</h1>
+            <p className="text-xs text-muted-foreground">{email}</p>
+          </div>
+          <p className="text-[11px] text-muted-foreground/60 mt-2">
+            Dashboard coming soon.
+          </p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>
-          {step === "signup" ? "Complete your profile" : "Welcome to Backrooms"}
-        </CardTitle>
-        <CardDescription>
-          {step === "email" && "Enter your email to get started"}
-          {step === "otp" && `We sent a code to ${email}`}
-          {step === "signup" && "Just a few more details"}
-        </CardDescription>
-      </CardHeader>
+    <div className="w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex flex-col gap-6">
+        {/* Header */}
+        <div className="flex flex-col gap-1 text-center">
+          <h1 className="text-base font-medium tracking-tight">
+            {step === "signup" ? "Complete your profile" : "Get started"}
+          </h1>
+          <p className="text-xs text-muted-foreground">
+            {step === "email" && "Enter your email to continue"}
+            {step === "otp" && (
+              <>
+                Code sent to{" "}
+                <span className="text-foreground/70">{email}</span>
+              </>
+            )}
+            {step === "signup" && "Just a few more details"}
+          </p>
+        </div>
 
-      <CardContent className="flex flex-col gap-4">
+        {/* Role toggle */}
         {step === "email" && (
-          <>
-            <Tabs
-              value={role}
-              onValueChange={(v) => setRole(v as Role)}
-            >
-              <TabsList className="w-full">
-                <TabsTrigger value="seeker">Seeker</TabsTrigger>
-                <TabsTrigger value="builder">Builder</TabsTrigger>
-              </TabsList>
-            </Tabs>
-
-            <form onSubmit={handleSendOtp} className="flex flex-col gap-3">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoFocus
-                />
-              </div>
-              <Button type="submit" disabled={loading}>
-                {loading ? "Sending..." : "Send code"}
-              </Button>
-            </form>
-          </>
+          <div className="flex items-center justify-center gap-0.5 rounded-md border border-border/60 bg-muted/30 p-0.5">
+            {(["seeker", "builder"] as const).map((r) => (
+              <button
+                key={r}
+                type="button"
+                onClick={() => setRole(r)}
+                className={`
+                  relative flex-1 rounded-sm px-4 py-1.5 text-xs font-medium tracking-wide uppercase transition-all duration-200
+                  ${
+                    role === r
+                      ? "bg-foreground text-background shadow-sm"
+                      : "text-muted-foreground hover:text-foreground/70"
+                  }
+                `}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
         )}
 
+        {/* Email step */}
+        {step === "email" && (
+          <form onSubmit={handleSendOtp} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="email" className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="you@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoFocus
+                className="h-10 bg-transparent border-border/60 focus-visible:border-foreground/30 transition-colors"
+              />
+            </div>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="h-10 text-xs font-medium uppercase tracking-wider"
+            >
+              {loading ? "Sending..." : "Send code"}
+            </Button>
+          </form>
+        )}
+
+        {/* OTP step */}
         {step === "otp" && (
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-4 animate-in fade-in slide-in-from-bottom-1 duration-200">
             <InputOTP
               maxLength={6}
               value={otp}
@@ -189,50 +210,70 @@ export function AuthForm() {
 
             <button
               type="button"
-              className="text-xs text-muted-foreground hover:text-foreground"
+              className="text-[11px] text-muted-foreground/60 hover:text-foreground/70 transition-colors tracking-wide"
               onClick={() => {
                 setOtp("");
                 setStep("email");
               }}
             >
-              Use a different email
+              ← different email
             </button>
           </div>
         )}
 
+        {/* Signup step */}
         {step === "signup" && (
-          <form onSubmit={handleSignup} className="flex flex-col gap-3">
+          <form onSubmit={handleSignup} className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-1 duration-200">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name" className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                Name
+              </Label>
               <Input
                 id="name"
                 placeholder="Your name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 autoFocus
+                className="h-10 bg-transparent border-border/60 focus-visible:border-foreground/30 transition-colors"
               />
             </div>
             {role === "seeker" && (
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="company">Company (optional)</Label>
+                <Label htmlFor="company" className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                  Company
+                  <span className="ml-1 text-muted-foreground/40 normal-case tracking-normal">optional</span>
+                </Label>
                 <Input
                   id="company"
                   placeholder="Your company"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
+                  className="h-10 bg-transparent border-border/60 focus-visible:border-foreground/30 transition-colors"
                 />
               </div>
             )}
-            <Button type="submit" disabled={loading}>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="h-10 text-xs font-medium uppercase tracking-wider"
+            >
               {loading ? "Creating account..." : "Get started"}
             </Button>
           </form>
         )}
 
+        {/* Error */}
         {error && (
-          <p className="text-xs text-destructive">{error}</p>
+          <p className="text-center text-[11px] text-destructive animate-in fade-in duration-150">
+            {error}
+          </p>
         )}
-      </CardContent>
-    </Card>
+
+        {/* Separator */}
+        {step === "email" && (
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-border/60 to-transparent" />
+        )}
+      </div>
+    </div>
   );
 }
