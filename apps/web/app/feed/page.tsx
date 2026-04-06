@@ -75,7 +75,7 @@ export default async function FeedPage({
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-10">
       <div className="flex flex-col gap-1 mb-8">
-        <h1 className="text-sm font-medium tracking-tight">Job feed</h1>
+        <h1 className="text-sm font-medium tracking-tight text-primary">Job feed</h1>
         <p className="text-[11px] text-muted-foreground/60 tracking-wide">
           Active listings from seekers looking for builders.
         </p>

@@ -30,6 +30,7 @@ export type Builder = {
   availability: "full_time" | "part_time" | "not_available" | null;
   timezone: string | null;
   website: string | null;
+  github: string | null;
   languages: string[];
   workHistory: WorkHistoryEntry[];
   education: EducationEntry[];
@@ -49,11 +50,13 @@ export default async function BuilderProfilePage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10">
-      <div className="flex flex-col gap-1 mb-10">
-        <h1 className="text-sm font-medium tracking-tight">Profile</h1>
-        <p className="text-[11px] text-muted-foreground/60 tracking-wide">
-          How seekers see you. Fill out more to rank higher in search.
-        </p>
+      <div className="flex items-start justify-between mb-10">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-sm font-medium tracking-tight text-primary">Profile</h1>
+          <p className="text-[11px] text-muted-foreground/60 tracking-wide">
+            How seekers see you. Fill out more to rank higher in search.
+          </p>
+        </div>
       </div>
       <ProfileForm builder={data.builder} />
     </div>

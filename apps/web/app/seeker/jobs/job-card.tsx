@@ -81,7 +81,7 @@ export function JobCard({ job }: { job: Job }) {
   }
 
   return (
-    <div className="group border border-border/60 bg-card transition-colors">
+    <div className="group border border-border/60 hover:border-primary/25 bg-card transition-colors border-l-2 border-l-primary/30 hover:border-l-primary/70">
       {/* Main row — always visible */}
       <button
         type="button"
@@ -104,20 +104,19 @@ export function JobCard({ job }: { job: Job }) {
           {/* Tags — inline on desktop, wrap on mobile */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <Badge
-              variant="outline"
-              className="text-[10px] px-1.5 py-0 h-4 tracking-wide"
+              className="text-[10px] px-1.5 py-0 h-4 tracking-wide bg-primary/15 text-primary border-primary/20"
             >
               {workTypeLabels[job.workType]}
             </Badge>
             <Badge
               variant="outline"
-              className="text-[10px] px-1.5 py-0 h-4 tracking-wide"
+              className="text-[10px] px-1.5 py-0 h-4 tracking-wide border-border text-muted-foreground"
             >
               {job.workMode}
             </Badge>
             <Badge
               variant="outline"
-              className="text-[10px] px-1.5 py-0 h-4 tracking-wide"
+              className="text-[10px] px-1.5 py-0 h-4 tracking-wide border-border text-muted-foreground"
             >
               {talentLevelLabels[job.talentLevel]}
             </Badge>
@@ -126,7 +125,7 @@ export function JobCard({ job }: { job: Job }) {
 
         {/* Right side — budget + time */}
         <div className="flex items-center gap-3 shrink-0">
-          <span className="text-[11px] text-foreground/80 tabular-nums hidden sm:block">
+          <span className="text-[11px] text-primary font-medium tabular-nums hidden sm:block">
             ${job.budgetAmount.toLocaleString()}
             {job.budgetType === "hourly" ? "/hr" : ""}
           </span>
@@ -147,22 +146,22 @@ export function JobCard({ job }: { job: Job }) {
           {/* Meta grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <CurrencyDollar className="size-3 shrink-0" />
+              <CurrencyDollar className="size-3 shrink-0 text-primary/70" />
               <span>
                 ${job.budgetAmount.toLocaleString()}
                 {job.budgetType === "hourly" ? "/hr" : " fixed"}
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <MapPin className="size-3 shrink-0" />
+              <MapPin className="size-3 shrink-0 text-primary/70" />
               <span className="capitalize">{job.workMode}</span>
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <Lightning className="size-3 shrink-0" />
+              <Lightning className="size-3 shrink-0 text-primary/70" />
               <span>{talentLevelLabels[job.talentLevel]}</span>
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <Clock className="size-3 shrink-0" />
+              <Clock className="size-3 shrink-0 text-primary/70" />
               <span>{job.duration || "No timeline"}</span>
             </div>
           </div>

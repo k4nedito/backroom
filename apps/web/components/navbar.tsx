@@ -26,7 +26,7 @@ export async function Navbar() {
         <div className="flex items-center gap-6">
           <Link
             href="/"
-            className="text-xs font-bold uppercase tracking-widest text-foreground"
+            className="text-xs font-bold uppercase tracking-widest text-primary"
           >
             Backrooms
           </Link>

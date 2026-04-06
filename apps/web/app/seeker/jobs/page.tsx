@@ -34,7 +34,7 @@ export default async function MyJobsPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-10">
       <div className="flex items-center justify-between mb-8">
         <div className="flex flex-col gap-1">
-          <h1 className="text-sm font-medium tracking-tight">My Jobs</h1>
+          <h1 className="text-sm font-medium tracking-tight text-primary">My Jobs</h1>
           <p className="text-[11px] text-muted-foreground/60 tracking-wide">
             {jobs.length} {jobs.length === 1 ? "listing" : "listings"}
           </p>

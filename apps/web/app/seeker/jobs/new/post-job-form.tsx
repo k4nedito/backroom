@@ -108,7 +108,7 @@ export function PostJobForm() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           maxLength={200}
-          className="h-10 bg-transparent border-border/60 focus-visible:border-foreground/30 transition-colors"
+          className="h-10 bg-transparent border-border/60 focus-visible:border-primary/40 focus-visible:ring-primary/20 transition-colors"
         />
       </fieldset>
 
@@ -132,7 +132,7 @@ export function PostJobForm() {
           onChange={(e) => setDescription(e.target.value)}
           maxLength={5000}
           rows={6}
-          className="bg-transparent border-border/60 focus-visible:border-foreground/30 transition-colors resize-none"
+          className="bg-transparent border-border/60 focus-visible:border-primary/40 focus-visible:ring-primary/20 transition-colors resize-none"
         />
       </fieldset>
 
@@ -189,7 +189,7 @@ export function PostJobForm() {
                 onClick={() => setBudgetType(t)}
                 className={`flex-1 py-2 text-[11px] font-medium uppercase tracking-wider transition-all duration-150 ${
                   budgetType === t
-                    ? "bg-foreground text-background"
+                    ? "bg-primary text-primary-foreground"
                     : "text-muted-foreground hover:text-foreground/70"
                 }`}
               >
@@ -220,7 +220,7 @@ export function PostJobForm() {
               placeholder="0"
               value={budgetAmount}
               onChange={(e) => setBudgetAmount(e.target.value)}
-              className="h-10 pl-7 bg-transparent border-border/60 focus-visible:border-foreground/30 transition-colors [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              className="h-10 pl-7 bg-transparent border-border/60 focus-visible:border-primary/40 focus-visible:ring-primary/20 transition-colors [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
             />
           </div>
         </fieldset>
@@ -262,7 +262,7 @@ export function PostJobForm() {
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
             maxLength={100}
-            className="h-10 bg-transparent border-border/60 focus-visible:border-foreground/30 transition-colors"
+            className="h-10 bg-transparent border-border/60 focus-visible:border-primary/40 focus-visible:ring-primary/20 transition-colors"
           />
         </fieldset>
       </div>

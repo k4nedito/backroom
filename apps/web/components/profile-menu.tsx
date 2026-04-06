@@ -62,14 +62,14 @@ export function ProfileMenu({ name, email, role }: Props) {
           </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onSelect={() =>
-            router.push(role === "seeker" ? "/seeker/settings" : "/builder/profile")
-          }
-        >
-          <UserCircle className="size-3.5" />
-          <span>Profile</span>
-        </DropdownMenuItem>
+        {role === "builder" && (
+          <DropdownMenuItem
+            onSelect={() => router.push("/builder/profile")}
+          >
+            <UserCircle className="size-3.5" />
+            <span>Profile</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           onSelect={() =>
             router.push(role === "seeker" ? "/seeker/settings" : "/builder/settings")

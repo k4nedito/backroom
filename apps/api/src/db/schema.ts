@@ -42,6 +42,7 @@ export const builders = pgTable("builders", {
   availability: availabilityEnum("availability"),
   timezone: varchar("timezone", { length: 100 }),
   website: varchar("website", { length: 500 }),
+  github: varchar("github", { length: 200 }),
   languages: jsonb("languages").$type<string[]>().default([]),
   workHistory: jsonb("work_history").$type<WorkHistoryEntry[]>().default([]),
   education: jsonb("education").$type<EducationEntry[]>().default([]),

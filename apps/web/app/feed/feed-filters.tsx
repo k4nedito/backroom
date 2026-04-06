@@ -90,7 +90,7 @@ export function FeedFilters() {
             const timeout = setTimeout(() => setSearch(value), 300);
             return () => clearTimeout(timeout);
           }}
-          className="h-10 pl-9 bg-transparent border-border/60 focus-visible:border-foreground/30 transition-colors"
+          className="h-10 pl-9 bg-transparent border-border/60 focus-visible:border-primary/40 focus-visible:ring-primary/20 transition-colors"
         />
       </div>
 
