@@ -4,6 +4,7 @@ import cookie from "@fastify/cookie";
 import jwt from "@fastify/jwt";
 import { seekerAuthRoutes } from "./routes/seeker/auth";
 import { seekerJobRoutes } from "./routes/seeker/jobs";
+import { seekerSettingsRoutes } from "./routes/seeker/settings";
 import { feedRoutes } from "./routes/feed";
 import { AppError, ErrorCode } from "./errors";
 import { log } from "./logger";
@@ -62,6 +63,7 @@ app.setNotFoundHandler((req, reply) => {
 app.get("/health", async () => ({ status: "ok" }));
 app.register(seekerAuthRoutes);
 app.register(seekerJobRoutes);
+app.register(seekerSettingsRoutes);
 app.register(feedRoutes);
 
 app.listen({ port: config.port, host: "0.0.0.0" }, (err) => {

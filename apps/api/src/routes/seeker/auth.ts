@@ -1,29 +1,9 @@
-import { FastifyInstance, FastifyReply } from "fastify";
+import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { createAndSendOtp, verifyOtp } from "../../services/otp";
 import { findSeekerByEmail, createSeeker } from "../../services/seeker/auth";
 import { AppError, ErrorCode } from "../../errors";
-import { config } from "../../config";
-
-function setAuthCookie(reply: FastifyReply, token: string) {
-  reply.setCookie("token", token, {
-    path: "/",
-    httpOnly: true,
-    secure: !config.isDev,
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60, // 7 days
-  });
-}
-
-function setSignupCookie(reply: FastifyReply, token: string) {
-  reply.setCookie("signup_token", token, {
-    path: "/",
-    httpOnly: true,
-    secure: !config.isDev,
-    sameSite: "lax",
-    maxAge: 15 * 60, // 15 minutes
-  });
-}
+import { setAuthCookie, setSignupCookie } from "../../lib/cookies";
 
 const otpRequestSchema = z.object({
   email: z.string().email(),
