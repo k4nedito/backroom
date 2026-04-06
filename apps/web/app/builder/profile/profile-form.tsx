@@ -15,11 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@workspace/ui/components/input-otp";
 import type { Builder, WorkHistoryEntry, EducationEntry } from "./page";
 
 // ─── helpers ─────────────────────────────────────────────────────────
@@ -120,14 +115,6 @@ export function ProfileForm({ builder }: { builder: Builder }) {
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
 
-  // email change
-  const [newEmail, setNewEmail] = useState("");
-  const [emailStep, setEmailStep] = useState<"idle" | "otp">("idle");
-  const [otp, setOtp] = useState("");
-  const [emailLoading, setEmailLoading] = useState(false);
-  const [emailMsg, setEmailMsg] = useState("");
-  const [emailError, setEmailError] = useState("");
-
   // auto-detect timezone
   useEffect(() => {
     if (!timezone) {
@@ -225,55 +212,12 @@ export function ProfileForm({ builder }: { builder: Builder }) {
     setTimeout(() => setSaveMsg(""), 2000);
   }
 
-  // ── email change ─────────────────────────────────────────────────
-
-  async function handleEmailSend(e: React.FormEvent) {
-    e.preventDefault();
-    setEmailError("");
-    setEmailMsg("");
-
-    if (!newEmail.trim()) return setEmailError("Enter a new email");
-    if (newEmail === builder.email)
-      return setEmailError("That's your current email");
-
-    setEmailLoading(true);
-    const { error } = await api("/builder/settings/email", {
-      method: "POST",
-      body: JSON.stringify({ newEmail }),
-    });
-    setEmailLoading(false);
-
-    if (error) return setEmailError(error.message);
-    setEmailStep("otp");
-  }
-
-  async function handleEmailVerify(code: string) {
-    setEmailError("");
-    setEmailLoading(true);
-
-    const { error } = await api("/builder/settings/email/verify", {
-      method: "POST",
-      body: JSON.stringify({ newEmail, code }),
-    });
-    setEmailLoading(false);
-
-    if (error) return setEmailError(error.message);
-
-    setEmailMsg("Email updated");
-    setEmailStep("idle");
-    setNewEmail("");
-    setOtp("");
-    router.refresh();
-    setTimeout(() => setEmailMsg(""), 2000);
-  }
-
   // ── render ───────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col gap-10 animate-in fade-in duration-300">
     <form
       onSubmit={handleSave}
-      className="flex flex-col gap-10"
+      className="flex flex-col gap-10 animate-in fade-in duration-300"
     >
       {/* ── Basics ────────────────────────────────────────────── */}
       <Section title="Basics" description="Your public display info.">
@@ -742,92 +686,5 @@ export function ProfileForm({ builder }: { builder: Builder }) {
       {/* bottom spacing */}
       <div className="h-6" />
     </form>
-
-      <Divider />
-
-      {/* ── Email ─────────────────────────────────────────────── */}
-      <Section title="Email" description={`Current: ${builder.email}`}>
-        {emailStep === "idle" ? (
-          <form
-            onSubmit={handleEmailSend}
-            className="flex flex-col gap-4"
-          >
-            <fieldset className="flex flex-col gap-1.5">
-              <Label htmlFor="newEmail" className={labelClass}>
-                New email
-              </Label>
-              <Input
-                id="newEmail"
-                type="email"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="new@email.com"
-                className={inputClass}
-              />
-            </fieldset>
-
-            <div className="flex items-center gap-3">
-              <Button
-                type="submit"
-                disabled={emailLoading}
-                size="sm"
-                variant="outline"
-                className="text-[11px] uppercase tracking-wider"
-              >
-                {emailLoading ? "Sending..." : "Send verification code"}
-              </Button>
-              {emailMsg && (
-                <span className="text-[11px] text-muted-foreground/60 animate-in fade-in duration-150">
-                  {emailMsg}
-                </span>
-              )}
-            </div>
-          </form>
-        ) : (
-          <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-1 duration-200">
-            <p className="text-[11px] text-muted-foreground/60 tracking-wide">
-              Code sent to{" "}
-              <span className="text-foreground/70">{newEmail}</span>
-            </p>
-            <InputOTP
-              maxLength={6}
-              value={otp}
-              onChange={(value) => {
-                setOtp(value);
-                if (value.length === 6) handleEmailVerify(value);
-              }}
-              autoFocus
-            >
-              <InputOTPGroup>
-                <InputOTPSlot index={0} />
-                <InputOTPSlot index={1} />
-                <InputOTPSlot index={2} />
-                <InputOTPSlot index={3} />
-                <InputOTPSlot index={4} />
-                <InputOTPSlot index={5} />
-              </InputOTPGroup>
-            </InputOTP>
-            <button
-              type="button"
-              onClick={() => {
-                setEmailStep("idle");
-                setOtp("");
-                setEmailError("");
-              }}
-              className="text-[11px] text-muted-foreground/50 hover:text-foreground/70 transition-colors tracking-wide w-fit"
-            >
-              &larr; cancel
-            </button>
-          </div>
-        )}
-
-        {emailError && (
-          <p className="text-[11px] text-destructive animate-in fade-in duration-150">
-            {emailError}
-          </p>
-        )}
-      </Section>
-
-    </div>
   );
 }
