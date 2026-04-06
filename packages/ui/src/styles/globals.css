@@ -61,8 +61,8 @@
     --primary-foreground: oklch(0.18 0.04 55);
     --secondary: oklch(0.26 0.02 55);
     --secondary-foreground: oklch(0.96 0.015 75);
-    --muted: oklch(0.26 0.02 55);
-    --muted-foreground: oklch(0.65 0.03 65);
+    --muted: oklch(0.32 0.02 55);
+    --muted-foreground: oklch(0.82 0.03 65);
     --accent: oklch(0.26 0.035 60);
     --accent-foreground: oklch(0.96 0.015 75);
     --destructive: oklch(0.577 0.245 27.325);
@@ -96,8 +96,8 @@
     --primary-foreground: oklch(0.18 0.04 55);
     --secondary: oklch(0.26 0.02 55);
     --secondary-foreground: oklch(0.96 0.015 75);
-    --muted: oklch(0.26 0.02 55);
-    --muted-foreground: oklch(0.65 0.03 65);
+    --muted: oklch(0.32 0.02 55);
+    --muted-foreground: oklch(0.82 0.03 65);
     --accent: oklch(0.26 0.035 60);
     --accent-foreground: oklch(0.96 0.015 75);
     --destructive: oklch(0.704 0.191 22.216);
@@ -126,4 +126,30 @@
   body {
     @apply bg-background text-foreground;
     }
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  /* Dot grid pattern */
+  body::before {
+    opacity: 0.08;
+    background-image: radial-gradient(circle, currentColor 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .dark body::before {
+    opacity: 0.06;
+  }
+  /* Noise texture overlay */
+  body::after {
+    opacity: 0.015;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .dark body::after {
+    opacity: 0.03;
+  }
 }

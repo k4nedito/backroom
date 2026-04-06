@@ -21,12 +21,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontSans.variable, "font-mono", jetbrainsMono.variable)}
+      className={cn("antialiased text-lg", fontSans.variable, "font-mono", jetbrainsMono.variable)}
     >
       <body className="flex flex-col h-svh overflow-hidden">
         <ThemeProvider>
-          <Navbar />
-          <div className="flex-1 overflow-y-auto">{children}</div>
+          <div className="relative z-10">
+            <Navbar />
+          </div>
+          <div className="relative z-10 flex-1 overflow-y-auto">{children}</div>
         </ThemeProvider>
       </body>
     </html>
