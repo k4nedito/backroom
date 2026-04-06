@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { api } from "@/lib/api";
+import { getUser } from "@/lib/auth";
 import { FeedFilters } from "./feed-filters";
 import { FeedCard } from "./feed-card";
 
@@ -22,8 +23,10 @@ type FeedJob = {
 
 async function JobList({
   searchParams,
+  isBuilder,
 }: {
   searchParams: Record<string, string>;
+  isBuilder: boolean;
 }) {
   const params = new URLSearchParams();
   if (searchParams.search) params.set("search", searchParams.search);
@@ -59,7 +62,7 @@ async function JobList({
         {jobs.length} {jobs.length === 1 ? "listing" : "listings"}
       </p>
       {jobs.map((job) => (
-        <FeedCard key={job.id} job={job} />
+        <FeedCard key={job.id} job={job} isBuilder={isBuilder} />
       ))}
     </div>
   );
@@ -71,6 +74,8 @@ export default async function FeedPage({
   searchParams: Promise<Record<string, string>>;
 }) {
   const params = await searchParams;
+  const user = await getUser();
+  const isBuilder = user?.role === "builder";
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -85,7 +90,7 @@ export default async function FeedPage({
         <Suspense>
           <FeedFilters />
         </Suspense>
-        <JobList searchParams={params} />
+        <JobList searchParams={params} isBuilder={isBuilder} />
       </div>
     </div>
   );

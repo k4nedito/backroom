@@ -24,11 +24,15 @@ export default async function MyJobsPage() {
   const user = await getUser();
   if (!user || user.role !== "seeker") redirect("/auth");
 
-  const { data } = await api<{ jobs: Job[] }>("/seeker/jobs", {
-    method: "GET",
-  });
+  const [jobsRes, countsRes] = await Promise.all([
+    api<{ jobs: Job[] }>("/seeker/jobs", { method: "GET" }),
+    api<{ counts: Record<string, number> }>("/seeker/submissions/counts", {
+      method: "GET",
+    }),
+  ]);
 
-  const jobs = data?.jobs ?? [];
+  const jobs = jobsRes.data?.jobs ?? [];
+  const counts = countsRes.data?.counts ?? {};
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-10">
@@ -62,7 +66,11 @@ export default async function MyJobsPage() {
       ) : (
         <div className="flex flex-col gap-2">
           {jobs.map((job) => (
-            <JobCard key={job.id} job={job} />
+            <JobCard
+              key={job.id}
+              job={job}
+              submissionCount={counts[job.id] ?? 0}
+            />
           ))}
         </div>
       )}

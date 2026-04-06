@@ -7,6 +7,8 @@ import { seekerJobRoutes } from "./routes/seeker/jobs";
 import { seekerSettingsRoutes } from "./routes/seeker/settings";
 import { builderAuthRoutes } from "./routes/builder/auth";
 import { builderSettingsRoutes } from "./routes/builder/settings";
+import { builderSubmissionRoutes } from "./routes/builder/submissions";
+import { seekerSubmissionRoutes } from "./routes/seeker/submissions";
 import { feedRoutes } from "./routes/feed";
 import { AppError, ErrorCode } from "./errors";
 import { log } from "./logger";
@@ -68,6 +70,8 @@ app.register(seekerJobRoutes);
 app.register(seekerSettingsRoutes);
 app.register(builderAuthRoutes);
 app.register(builderSettingsRoutes);
+app.register(builderSubmissionRoutes);
+app.register(seekerSubmissionRoutes);
 app.register(feedRoutes);
 
 app.listen({ port: config.port, host: "0.0.0.0" }, (err) => {

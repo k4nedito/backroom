@@ -9,8 +9,18 @@ import {
   Lightning,
   Buildings,
   User,
+  PaperPlaneTilt,
+  CheckCircle,
 } from "@phosphor-icons/react";
 import { Badge } from "@workspace/ui/components/badge";
+import { Button } from "@workspace/ui/components/button";
+import { Textarea } from "@workspace/ui/components/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@workspace/ui/components/dialog";
+import { api } from "@/lib/api";
 
 type FeedJob = {
   id: string;
@@ -54,8 +64,40 @@ function timeAgo(date: string) {
   return `${days}d ago`;
 }
 
-export function FeedCard({ job }: { job: FeedJob }) {
+export function FeedCard({
+  job,
+  isBuilder,
+}: {
+  job: FeedJob;
+  isBuilder: boolean;
+}) {
   const [expanded, setExpanded] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleSubmit() {
+    setError("");
+    setSubmitting(true);
+    const { error: err } = await api("/builder/submissions", {
+      method: "POST",
+      body: JSON.stringify({
+        jobId: job.id,
+        message: message.trim() || undefined,
+      }),
+    });
+    setSubmitting(false);
+
+    if (err) {
+      setError(err.message);
+      return;
+    }
+
+    setSubmitted(true);
+    setModalOpen(false);
+  }
 
   return (
     <div className="group border border-border/60 hover:border-primary/25 bg-card transition-colors border-l-2 border-l-primary/30 hover:border-l-primary/70">
@@ -92,7 +134,7 @@ export function FeedCard({ job }: { job: FeedJob }) {
             </div>
           </div>
 
-          {/* Posted by — mobile shows inline, desktop shows in row */}
+          {/* Posted by */}
           <div className="flex items-center gap-2 text-[10px] text-muted-foreground/50">
             {job.seeker.company ? (
               <>
@@ -155,8 +197,89 @@ export function FeedCard({ job }: { job: FeedJob }) {
           <p className="text-xs text-muted-foreground/80 leading-relaxed whitespace-pre-wrap">
             {job.description}
           </p>
+
+          {/* Submit button — builders only */}
+          {isBuilder && (
+            <div className="flex items-center gap-2 pt-4 mt-4 border-t border-border/30">
+              {submitted ? (
+                <span className="flex items-center gap-1.5 text-[11px] text-primary/70">
+                  <CheckCircle className="size-3.5" weight="fill" />
+                  Submitted
+                </span>
+              ) : (
+                <Button
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setModalOpen(true);
+                  }}
+                  className="text-[11px] uppercase tracking-wider gap-1.5"
+                >
+                  <PaperPlaneTilt className="size-3" />
+                  I'm in
+                </Button>
+              )}
+            </div>
+          )}
         </div>
       )}
+
+      {/* Submit modal */}
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+          <DialogTitle className="sr-only">Submit to {job.title}</DialogTitle>
+          <div className="flex flex-col">
+            <div className="px-5 pt-4 pb-3">
+              <p className="text-xs font-medium tracking-tight">
+                {job.title}
+              </p>
+              <p className="text-[10px] text-muted-foreground/50 tracking-wide mt-0.5">
+                Your profile will be shared with the seeker
+              </p>
+            </div>
+            <div className="h-px bg-border/40" />
+            <div className="px-5 py-4 flex flex-col gap-3">
+              <label className="text-[11px] text-muted-foreground uppercase tracking-wider">
+                Anything else they should know?
+              </label>
+              <Textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Why you're a good fit, availability, relevant work..."
+                rows={4}
+                maxLength={2000}
+                className="bg-transparent border-border/60 focus-visible:border-primary/40 focus-visible:ring-primary/20 transition-colors resize-none text-xs"
+              />
+              <p className="text-[10px] text-muted-foreground/30 tracking-wide text-right">
+                {message.length}/2000
+              </p>
+              {error && (
+                <p className="text-[11px] text-destructive">{error}</p>
+              )}
+            </div>
+            <div className="h-px bg-border/40" />
+            <div className="px-5 py-3 flex items-center justify-end gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setModalOpen(false)}
+                className="text-[11px] uppercase tracking-wider"
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                disabled={submitting}
+                onClick={handleSubmit}
+                className="text-[11px] uppercase tracking-wider gap-1.5"
+              >
+                <PaperPlaneTilt className="size-3" />
+                {submitting ? "Sending..." : "Send"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -82,6 +82,18 @@ export const jobs = pgTable("jobs", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const submissions = pgTable("submissions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  builderId: uuid("builder_id")
+    .notNull()
+    .references(() => builders.id),
+  jobId: uuid("job_id")
+    .notNull()
+    .references(() => jobs.id),
+  message: text("message"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const otpCodes = pgTable("otp_codes", {
   id: uuid("id").defaultRandom().primaryKey(),
   email: text("email").notNull(),
