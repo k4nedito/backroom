@@ -36,6 +36,7 @@ const profileSchema = z.object({
   timezone: z.string().min(1).max(100).optional(),
   website: z.string().url().max(500).optional(),
   github: z.string().max(200).optional(),
+  linkedin: z.string().max(200).optional(),
   languages: z.array(z.string().min(1)).max(20).optional(),
   workHistory: z.array(workHistorySchema).max(20).optional(),
   education: z.array(educationSchema).max(10).optional(),

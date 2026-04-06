@@ -31,6 +31,7 @@ export type Builder = {
   timezone: string | null;
   website: string | null;
   github: string | null;
+  linkedin: string | null;
   languages: string[];
   workHistory: WorkHistoryEntry[];
   education: EducationEntry[];

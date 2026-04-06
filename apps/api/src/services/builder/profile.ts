@@ -23,6 +23,8 @@ export async function updateBuilderProfile(
     availability?: "full_time" | "part_time" | "not_available";
     timezone?: string;
     website?: string;
+    github?: string;
+    linkedin?: string;
     languages?: string[];
     workHistory?: WorkHistoryEntry[];
     education?: EducationEntry[];

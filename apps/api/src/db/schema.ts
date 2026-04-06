@@ -43,6 +43,7 @@ export const builders = pgTable("builders", {
   timezone: varchar("timezone", { length: 100 }),
   website: varchar("website", { length: 500 }),
   github: varchar("github", { length: 200 }),
+  linkedin: varchar("linkedin", { length: 200 }),
   languages: jsonb("languages").$type<string[]>().default([]),
   workHistory: jsonb("work_history").$type<WorkHistoryEntry[]>().default([]),
   education: jsonb("education").$type<EducationEntry[]>().default([]),
@@ -89,7 +90,7 @@ export const submissions = pgTable("submissions", {
     .references(() => builders.id),
   jobId: uuid("job_id")
     .notNull()
-    .references(() => jobs.id),
+    .references(() => jobs.id, { onDelete: "cascade" }),
   message: text("message"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

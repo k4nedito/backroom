@@ -234,7 +234,7 @@ export function FeedCard({
 
       {/* Submit modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-2xl p-0 overflow-hidden">
           <DialogTitle className="sr-only">Submit to {job.title}</DialogTitle>
           <div className="flex flex-col">
             <div className="px-5 pt-4 pb-3">
@@ -254,7 +254,7 @@ export function FeedCard({
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Why you're a good fit, availability, relevant work..."
-                rows={4}
+                rows={12}
                 maxLength={2000}
                 className="bg-transparent border-border/60 focus-visible:border-primary/40 focus-visible:ring-primary/20 transition-colors resize-none text-xs"
               />
