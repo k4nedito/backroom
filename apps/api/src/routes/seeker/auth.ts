@@ -1,8 +1,29 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyReply } from "fastify";
 import { z } from "zod";
 import { createAndSendOtp, verifyOtp } from "../../services/otp";
 import { findSeekerByEmail, createSeeker } from "../../services/seeker/auth";
 import { AppError, ErrorCode } from "../../errors";
+import { config } from "../../config";
+
+function setAuthCookie(reply: FastifyReply, token: string) {
+  reply.setCookie("token", token, {
+    path: "/",
+    httpOnly: true,
+    secure: !config.isDev,
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+  });
+}
+
+function setSignupCookie(reply: FastifyReply, token: string) {
+  reply.setCookie("signup_token", token, {
+    path: "/",
+    httpOnly: true,
+    secure: !config.isDev,
+    sameSite: "lax",
+    maxAge: 15 * 60, // 15 minutes
+  });
+}
 
 const otpRequestSchema = z.object({
   email: z.string().email(),
@@ -46,13 +67,15 @@ export async function seekerAuthRoutes(app: FastifyInstance) {
         { id: seeker.id, email: seeker.email, role: "seeker" },
         { expiresIn: "7d" }
       );
-      return { isNew: false, token, seeker };
+      setAuthCookie(reply, token);
+      return { isNew: false, seeker };
     }
 
     // New user — frontend needs to collect extra info
     // Give them a short-lived signup token so they don't have to OTP again
     const signupToken = app.jwt.sign({ email, purpose: "signup" }, { expiresIn: "15m" });
-    return { isNew: true, signupToken };
+    setSignupCookie(reply, signupToken);
+    return { isNew: true };
   });
 
   // Step 3: complete signup (only for new users)
@@ -63,15 +86,13 @@ export async function seekerAuthRoutes(app: FastifyInstance) {
 
     const { email, name, company } = parsed.data;
 
-    // Verify signup token
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith("Bearer "))
+    // Verify signup token from cookie
+    const signupToken = req.cookies.signup_token;
+    if (!signupToken)
       throw new AppError(ErrorCode.UNAUTHORIZED, "Missing signup token");
 
     try {
-      const payload = app.jwt.verify<{ email: string; purpose: string }>(
-        authHeader.slice(7)
-      );
+      const payload = app.jwt.verify<{ email: string; purpose: string }>(signupToken);
       if (payload.purpose !== "signup" || payload.email !== email)
         throw new AppError(ErrorCode.UNAUTHORIZED, "Invalid signup token");
     } catch {
@@ -89,6 +110,8 @@ export async function seekerAuthRoutes(app: FastifyInstance) {
       { expiresIn: "7d" }
     );
 
-    return { token, seeker };
+    setAuthCookie(reply, token);
+    reply.clearCookie("signup_token", { path: "/" });
+    return { seeker };
   });
 }

@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import cookie from "@fastify/cookie";
 import jwt from "@fastify/jwt";
 import { seekerAuthRoutes } from "./routes/seeker/auth";
 import { AppError, ErrorCode } from "./errors";
@@ -8,8 +9,12 @@ import { config } from "./config";
 
 const app = Fastify({ logger: false });
 
-app.register(cors, { origin: config.cors.origin });
-app.register(jwt, { secret: config.jwt.secret });
+app.register(cors, { origin: config.cors.origin, credentials: true });
+app.register(cookie);
+app.register(jwt, {
+  secret: config.jwt.secret,
+  cookie: { cookieName: "token", signed: false },
+});
 
 app.addHook("onResponse", (req, reply, done) => {
   log.request(
