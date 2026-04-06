@@ -1,0 +1,11 @@
+{
+  "name": "backrooms",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel -r dev",
+    "dev:api": "pnpm --filter @backrooms/api dev",
+    "dev:web": "pnpm --filter @backrooms/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint"
+  }
+}
