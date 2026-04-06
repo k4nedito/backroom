@@ -24,9 +24,11 @@ type FeedJob = {
 async function JobList({
   searchParams,
   isBuilder,
+  appliedJobIds,
 }: {
   searchParams: Record<string, string>;
   isBuilder: boolean;
+  appliedJobIds: Set<string>;
 }) {
   const params = new URLSearchParams();
   if (searchParams.search) params.set("search", searchParams.search);
@@ -62,7 +64,7 @@ async function JobList({
         {jobs.length} {jobs.length === 1 ? "listing" : "listings"}
       </p>
       {jobs.map((job) => (
-        <FeedCard key={job.id} job={job} isBuilder={isBuilder} />
+        <FeedCard key={job.id} job={job} isBuilder={isBuilder} alreadyApplied={appliedJobIds.has(job.id)} />
       ))}
     </div>
   );
@@ -77,6 +79,15 @@ export default async function FeedPage({
   const user = await getUser();
   const isBuilder = user?.role === "builder";
 
+  let appliedJobIds = new Set<string>();
+  if (isBuilder) {
+    const { data } = await api<{ jobIds: string[] }>(
+      "/builder/submissions/job-ids",
+      { method: "GET" },
+    );
+    appliedJobIds = new Set(data?.jobIds ?? []);
+  }
+
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-10">
       <div className="flex flex-col gap-1 mb-8">
@@ -90,7 +101,7 @@ export default async function FeedPage({
         <Suspense>
           <FeedFilters />
         </Suspense>
-        <JobList searchParams={params} isBuilder={isBuilder} />
+        <JobList searchParams={params} isBuilder={isBuilder} appliedJobIds={appliedJobIds} />
       </div>
     </div>
   );

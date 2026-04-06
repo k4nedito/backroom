@@ -2,7 +2,10 @@ import { FastifyInstance } from "fastify";
 import { z } from "zod";
 import { requireAuth } from "../../middleware/auth";
 import { AppError, ErrorCode } from "../../errors";
-import { createSubmission } from "../../services/builder/submissions";
+import {
+  createSubmission,
+  getSubmissionsByBuilderId,
+} from "../../services/builder/submissions";
 
 const submitSchema = z.object({
   jobId: z.string().uuid(),
@@ -26,5 +29,13 @@ export async function builderSubmissionRoutes(app: FastifyInstance) {
       parsed.data.message,
     );
     return { submission };
+  });
+
+  app.get("/builder/submissions/job-ids", async (req) => {
+    if (req.user.role !== "builder")
+      throw new AppError(ErrorCode.FORBIDDEN, "Builders only");
+
+    const subs = await getSubmissionsByBuilderId(req.user.id);
+    return { jobIds: subs.map((s) => s.jobId) };
   });
 }

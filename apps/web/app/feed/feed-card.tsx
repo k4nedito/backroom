@@ -67,15 +67,17 @@ function timeAgo(date: string) {
 export function FeedCard({
   job,
   isBuilder,
+  alreadyApplied,
 }: {
   job: FeedJob;
   isBuilder: boolean;
+  alreadyApplied: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(alreadyApplied);
   const [error, setError] = useState("");
 
   async function handleSubmit() {
