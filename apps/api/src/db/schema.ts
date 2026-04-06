@@ -9,6 +9,14 @@ export const seekers = pgTable("seekers", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+export const builders = pgTable("builders", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const workTypeEnum = pgEnum("work_type", [
   "from_scratch",
   "join_in_progress",

@@ -5,6 +5,7 @@ import jwt from "@fastify/jwt";
 import { seekerAuthRoutes } from "./routes/seeker/auth";
 import { seekerJobRoutes } from "./routes/seeker/jobs";
 import { seekerSettingsRoutes } from "./routes/seeker/settings";
+import { builderAuthRoutes } from "./routes/builder/auth";
 import { feedRoutes } from "./routes/feed";
 import { AppError, ErrorCode } from "./errors";
 import { log } from "./logger";
@@ -64,6 +65,7 @@ app.get("/health", async () => ({ status: "ok" }));
 app.register(seekerAuthRoutes);
 app.register(seekerJobRoutes);
 app.register(seekerSettingsRoutes);
+app.register(builderAuthRoutes);
 app.register(feedRoutes);
 
 app.listen({ port: config.port, host: "0.0.0.0" }, (err) => {
