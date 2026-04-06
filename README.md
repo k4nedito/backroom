@@ -1,6 +1,6 @@
 # Backrooms
 
-A platform for getting shit done (that doesn't actually sucks).
+<img width="849" height="273" alt="image" src="https://github.com/user-attachments/assets/d3a11159-f1e1-4992-b305-06534df47b85" />
 
 ## Stack
 
