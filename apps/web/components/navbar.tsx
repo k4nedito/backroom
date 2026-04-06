@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { Bell } from "@phosphor-icons/react/dist/ssr";
 import { getUser } from "@/lib/auth";
-import { ThemeToggle } from "./theme-toggle";
 import { ProfileMenu } from "./profile-menu";
 
 const seekerLinks = [
@@ -44,7 +44,15 @@ export async function Navbar() {
           )}
         </div>
         <div className="flex items-center gap-1">
-          <ThemeToggle />
+          {user && (
+            <button
+              type="button"
+              className="flex items-center justify-center size-8 rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+              aria-label="Notifications"
+            >
+              <Bell className="size-3.5" />
+            </button>
+          )}
           {user ? (
             <ProfileMenu
               name={user.name}
