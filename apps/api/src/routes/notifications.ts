@@ -3,18 +3,10 @@ import { z } from "zod";
 import { requireAuth } from "../middleware/auth";
 import { AppError, ErrorCode } from "../errors";
 import {
-  createNotification,
   getNotifications,
   markRead,
   markAllRead,
 } from "../services/notifications";
-
-export const createNotificationSchema = z.object({
-  recipientId: z.string(),
-  recipientType: z.enum(["seeker", "builder"]),
-  type: z.literal("new_submission"),
-  submissionId: z.string().optional(),
-});
 
 export const getNotificationsSchema = z.object({
   recipientId: z.string(),
@@ -28,18 +20,6 @@ export const markReadSchema = z.object({
 
 export async function notificationRoutes(app: FastifyInstance) {
   app.addHook("preHandler", requireAuth);
-
-  app.post("/notifications/create", async (req) => {
-    const parsed = createNotificationSchema.safeParse(req.body);
-    if (!parsed.success)
-      throw new AppError(
-        ErrorCode.VALIDATION_ERROR,
-        "Invalid notification schema",
-      );
-
-    await createNotification(parsed.data);
-    return { ok: true };
-  });
 
   app.get("/notifications/getAll", async (req) => {
     const parsed = getNotificationsSchema.safeParse(req.query);

@@ -6,6 +6,7 @@ import {
   createSubmission,
   getSubmissionsByBuilderId,
 } from "../../services/builder/submissions";
+import { createNotification } from "../../services/notifications";
 
 const submitSchema = z.object({
   jobId: z.string().uuid(),
@@ -28,6 +29,14 @@ export async function builderSubmissionRoutes(app: FastifyInstance) {
       parsed.data.jobId,
       parsed.data.message,
     );
+
+    await createNotification({
+      recipientId: submission.seekerId,
+      recipientType: "seeker",
+      type: "new_submission",
+      submissionId: submission.id,
+    });
+
     return { submission };
   });
 
