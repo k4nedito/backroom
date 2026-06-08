@@ -4,6 +4,8 @@
 
 ## Stack
 
+*After some time I'm back to building this project. Apart from initial UI and boilerplate code, nothing is vibe-coded. This is being built by a HUMAN*
+
 - **Backend**: Fastify + PostgreSQL + Drizzle ORM
 - **Frontend**: Next.js 16 + React 19 + shadcn/ui + Tailwind CSS 4
 - **Auth**: Passwordless OTP via email (Resend) + JWT in HTTP-only cookies
