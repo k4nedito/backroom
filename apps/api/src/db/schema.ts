@@ -1,4 +1,14 @@
-import { pgTable, pgEnum, uuid, text, timestamp, integer, varchar, boolean, jsonb } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  pgEnum,
+  uuid,
+  text,
+  timestamp,
+  integer,
+  varchar,
+  boolean,
+  jsonb,
+} from "drizzle-orm/pg-core";
 
 export const seekers = pgTable("seekers", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -64,6 +74,14 @@ export const talentLevelEnum = pgEnum("talent_level", [
   "intermediate",
   "advanced",
 ]);
+export const recipientTypeEnum = pgEnum("recipient_type", [
+  "seeker",
+  "builder",
+]);
+
+export const notificationTypeEnum = pgEnum("notification_type", [
+  "new_submission",
+]);
 
 export const jobs = pgTable("jobs", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -101,5 +119,17 @@ export const otpCodes = pgTable("otp_codes", {
   code: varchar("code", { length: 6 }).notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   attempts: integer("attempts").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const notifications = pgTable("notifications", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  recipientId: uuid("recipient_id").notNull(),
+  recipientType: recipientTypeEnum("recipient_type").notNull(),
+  type: notificationTypeEnum("type").notNull(),
+  submissionId: uuid("submission_id").references(() => submissions.id, {
+    onDelete: "cascade",
+  }),
+  read: boolean("read").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

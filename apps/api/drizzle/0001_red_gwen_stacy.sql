@@ -1,0 +1,1 @@
+ALTER TABLE "builders" ADD COLUMN "linkedin" varchar(200);

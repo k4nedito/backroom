@@ -8,6 +8,13 @@
       "when": 1775513900887,
       "tag": "0000_milky_kang",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1780877883661,
+      "tag": "0001_red_gwen_stacy",
+      "breakpoints": true
     }
   ]
 }

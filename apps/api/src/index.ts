@@ -10,6 +10,7 @@ import { builderSettingsRoutes } from "./routes/builder/settings";
 import { builderSubmissionRoutes } from "./routes/builder/submissions";
 import { seekerSubmissionRoutes } from "./routes/seeker/submissions";
 import { feedRoutes } from "./routes/feed";
+import { notificationRoutes } from "./routes/notifications";
 import { AppError, ErrorCode } from "./errors";
 import { log } from "./logger";
 import { config } from "./config";
@@ -73,6 +74,7 @@ app.register(builderSettingsRoutes);
 app.register(builderSubmissionRoutes);
 app.register(seekerSubmissionRoutes);
 app.register(feedRoutes);
+app.register(notificationRoutes);
 
 app.listen({ port: config.port, host: "0.0.0.0" }, (err) => {
   if (err) {
