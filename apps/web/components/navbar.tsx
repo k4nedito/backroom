@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { Bell } from "@phosphor-icons/react/dist/ssr";
+import { BellIcon } from "@phosphor-icons/react/dist/ssr";
 import { getUser } from "@/lib/auth";
 import { ProfileMenu } from "./profile-menu";
+import { api } from "@/lib/api";
+import { NotificationBell } from "./notification-bell";
 
 const commonLinks = [{ href: "/feed", label: "Feed" }];
 
@@ -19,6 +21,22 @@ const builderLinks = [
 
 export async function Navbar() {
   const user = await getUser();
+
+  let unreadCount = 0;
+  let notifications: {
+    id: string;
+    type: string;
+    read: boolean;
+    createdAt: string;
+  }[] = [];
+
+  if (user?.role === "seeker") {
+    const { data } = await api<{ notifications: typeof notifications }>(
+      `/notifications/getAll?recipientId=${user.id}&recipientType=seeker`,
+    );
+    unreadCount = data?.notifications.filter((n) => !n.read).length ?? 0;
+    notifications = data?.notifications ?? [];
+  }
 
   return (
     <nav className="border-b border-border/60 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
@@ -49,20 +67,14 @@ export async function Navbar() {
         </div>
         <div className="flex items-center gap-1">
           {user && (
-            <button
-              type="button"
-              className="flex items-center justify-center size-8 rounded-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-              aria-label="Notifications"
-            >
-              <Bell className="size-3.5" />
-            </button>
+            <NotificationBell
+              initialNotifications={notifications}
+              unreadCount={unreadCount}
+              recipientId={user.id}
+            />
           )}
           {user ? (
-            <ProfileMenu
-              name={user.name}
-              email={user.email}
-              role={user.role}
-            />
+            <ProfileMenu name={user.name} email={user.email} role={user.role} />
           ) : (
             <Link
               href="/auth"
